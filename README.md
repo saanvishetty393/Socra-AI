@@ -11,7 +11,7 @@ This is the Milestone-1 MVP. It has no backend: all data is dummy data, and app 
 | Name | GitHub | Responsibilities |
 |------|--------|------------------|
 | Saanvi D Shetty | [@saanvishetty393](https://github.com/saanvishetty393) | [e.g. Next.js setup, Navbar, AuthContext, Dashboard] |
-| Rakshitha K Achar |@raKshItha2007172(https://github.com/raKshItha2007172) | [e.g. Landing page, reusable components, Quiz page] |
+| Rakshitha K Achar |[@raKshItha2007172](https://github.com/raKshItha2007172) | [e.g. Landing page, reusable components, Quiz page] |
 
 ## Tech Stack
 - Next.js (App Router)
