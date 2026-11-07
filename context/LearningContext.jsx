@@ -1,14 +1,78 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { topics } from "../data/topics";
 import { tutorScripts, genericScript } from "../data/tutorScripts";
 import { initialQuizHistory } from "../data/user";
 
 const LearningContext = createContext();
+const STORAGE_KEY = "socra_learning";
+
+function isValidQuizResult(result) {
+  return result
+    && typeof result.topicId === "string"
+    && Number.isFinite(result.score)
+    && Number.isFinite(result.total)
+    && result.total > 0;
+}
+
+function readSavedLearning() {
+  try {
+    const savedLearning = window.localStorage.getItem(STORAGE_KEY);
+    if (!savedLearning) return null;
+
+    const parsedLearning = JSON.parse(savedLearning);
+    if (!parsedLearning || typeof parsedLearning !== "object") return null;
+
+    const chatHistories = parsedLearning.chatHistories
+      && typeof parsedLearning.chatHistories === "object"
+      && !Array.isArray(parsedLearning.chatHistories)
+      ? Object.fromEntries(
+          Object.entries(parsedLearning.chatHistories)
+            .filter(([, messages]) => Array.isArray(messages))
+            .map(([topicId, messages]) => [
+              topicId,
+              messages.filter((message) => message && typeof message.text === "string"),
+            ]),
+        )
+      : {};
+
+    return {
+      chatHistories,
+      quizResults: Array.isArray(parsedLearning.quizResults)
+        ? parsedLearning.quizResults.filter(isValidQuizResult)
+        : null,
+    };
+  } catch (error) {
+    console.error("Unable to load saved Socra learning data.", error);
+    return null;
+  }
+}
 
 export function LearningProvider({ children }) {
   const [chatHistories, setChatHistories] = useState({});
   const [quizResults, setQuizResults] = useState(initialQuizHistory);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const savedLearning = readSavedLearning();
+    if (savedLearning) {
+      setChatHistories(savedLearning.chatHistories);
+      if (savedLearning.quizResults) {
+        setQuizResults(savedLearning.quizResults);
+      }
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ chatHistories, quizResults }));
+    } catch (error) {
+      console.error("Unable to save Socra learning data.", error);
+    }
+  }, [chatHistories, quizResults, loaded]);
 
   // Get or initialize chat messages for a specific topic
   const getChatHistory = (topicId) => {
