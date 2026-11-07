@@ -1,6 +1,6 @@
 # Socra – AI Tutor
 
-Socra is an AI tutor website that helps students learn concepts through guided conversation. A student picks a topic, chats with the tutor, takes a short quiz, and tracks their progress.
+Socra is an AI tutor website that helps students learn concepts through guided conversation. A student picks a topic, chats with the tutor, takes a short quiz, and tracks their progress. Demo account, learning, and theme state is saved in browser local storage.
 
 This is the Milestone-1 MVP. It has no backend: all data is dummy data, and app state is shared with React Context.
 
@@ -88,7 +88,7 @@ skill-project/
    ```
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Use any valid email and a password of 6 or more characters to log in, since authentication is mocked.
+Use any valid email and password to log in, since authentication is mocked. Registration requires a password of 6 or more characters.
 
 ## Documentation
 - [Product Assumptions](./PRODUCT-ASSUMPTIONS.md)

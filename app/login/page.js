@@ -21,7 +21,12 @@ export default function LoginPage() {
     }
     setLoading(true);
     setTimeout(() => {
-      login(email, password);
+      const result = login(email, password);
+      if (!result.success) {
+        setError(result.message);
+        setLoading(false);
+        return;
+      }
       router.push("/dashboard");
     }, 600);
   };

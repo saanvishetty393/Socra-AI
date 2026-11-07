@@ -17,13 +17,18 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !email || !password) {
+    if (!name.trim() || !email.trim() || password.length < 6) {
       setError("Please complete all required fields.");
       return;
     }
     setLoading(true);
     setTimeout(() => {
-      register(name, email, grade);
+      const result = register(name, email, password, grade);
+      if (!result.success) {
+        setError(result.message);
+        setLoading(false);
+        return;
+      }
       router.push("/dashboard");
     }, 600);
   };
@@ -63,6 +68,7 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium mb-1">Password</label>
               <input
                 type="password"
+                minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent"

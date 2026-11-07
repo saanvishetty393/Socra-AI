@@ -5,20 +5,35 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState("light");
+  const [loaded, setLoaded] = useState(false);
 
-  // Load theme preference from localStorage on page load
   useEffect(() => {
-    const savedTheme = localStorage.getItem("socra_theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    try {
+      const savedTheme = window.localStorage.getItem("socra_theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        setTheme(savedTheme);
+      }
+    } catch (error) {
+      console.error("Unable to load the saved Socra theme.", error);
+    } finally {
+      setLoaded(true);
+    }
   }, []);
 
-  // Toggle between light and dark themes
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    if (!loaded) return;
+
+    try {
+      window.localStorage.setItem("socra_theme", theme);
+    } catch (error) {
+      console.error("Unable to save the Socra theme.", error);
+    }
+  }, [theme, loaded]);
+
   const toggleTheme = () => {
     const nextTheme = theme === "light" ? "dark" : "light";
     setTheme(nextTheme);
-    localStorage.setItem("socra_theme", nextTheme);
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
   };
 
   return (
